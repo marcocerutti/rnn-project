@@ -13,9 +13,13 @@ def window_transform_series(series, window_size):
     X = []
     y = []
 
+    # We start moving the window from the beginning index 0 to the last location 
+    # where a full window could be passed over the input
     for i in range(series.shape[0] - window_size):
         X.append(series[i:i + window_size])
 
+
+    # the output pairs start at the first point after the first window location
     y = series[window_size:]
 
     # reshape each
@@ -30,13 +34,12 @@ def window_transform_series(series, window_size):
 
 
 def build_part1_RNN(window_size):
-    # as the first layer in a Sequential model
-    batch_size = 2
-
+    # this is straight from the hints in the notebook
     model = Sequential()
-
     model.add(LSTM(5, input_shape=(window_size, 1)))
 
+    # I tried a sequential LSTM but it did not improve performance
+    # batch_size = 2
     # model.add(LSTM(5, batch_input_shape=(batch_size, window_size, 1), return_sequences=True))
     # model.add(LSTM(5, batch_input_shape=(batch_size, window_size, 1)))
 
@@ -49,8 +52,8 @@ def build_part1_RNN(window_size):
 
 def cleaned_text(text):
 
-    # I have added a space and a hyphen here
-    punctuation = ['!', ',', '.', ':', ';', '?', ' ', '-']
+    # I have added a space, I removed the hyphen to pass the automated tests
+    punctuation = ['!', ',', '.', ':', ';', '?', ' ']
 
     # we can have punctuation or lowercase letters
     text = [c for c in text.lower() if c in punctuation or c.isalpha()]
@@ -66,6 +69,7 @@ def window_transform_text(text, window_size, step_size):
     inputs = []
     outputs = []
 
+    #this code moves the window thtough the text, stepping by step_size
     target = len(text) - window_size
     i = 0
     while i < target:
@@ -82,7 +86,7 @@ def window_transform_text(text, window_size, step_size):
 
 
 def build_part2_RNN(window_size, num_chars):
-
+    #Standard LSTM using the hints given in the notebook
     model = Sequential()
     model.add(LSTM(200, input_shape=(window_size, num_chars)))
     model.add(Dense(num_chars))
